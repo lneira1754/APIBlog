@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block head_title %}New Post{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-center mb-0">Crear nueva Publicacion</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('new_post') }}">
+                    <div class="form-group">
+                        <label for="title">Titulo</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="content">Contenido</label>
+                        <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Categorias:</label><br>
+                        {% for category in categories %}
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="cat{{ category.id }}" name="categories" value="{{ category.id }}">
+                            <label class="form-check-label" for="cat{{ category.id }}">{{ category.name }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Publicar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

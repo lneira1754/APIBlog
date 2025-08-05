@@ -134,5 +134,49 @@ def category_posts(category_id):
     category = Category.query.get_or_404(category_id)
     return render_template('blog/category_posts.html', category=category) 
 
+@app.route('/post/<int:post_id>/delete', methods=['POST'])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
+        abort(403)
+    
+    db.session.delete(post)
+    db.session.commit()
+    flash('El post fue eliminado correctamente.')
+    return redirect(url_for('index'))  # o donde quieras redirigir
+
+
+@app.route('/post/<int:post_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_post(post_id):
+    post = Post.query.get_or_404(post_id)
+
+    # Solo el autor puede editar
+    if post.author != current_user:
+        flash('No tenés permiso para editar este post.', 'error')
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        post.title = request.form['title']
+        post.content = request.form['content']
+        category_ids = request.form.getlist('categories')
+        post.categories = [Category.query.get(cat_id) for cat_id in category_ids if Category.query.get(cat_id)]
+        db.session.commit()
+        flash('Post actualizado con éxito!', 'success')
+        return redirect(url_for('post_detail', post_id=post.id))
+
+    return render_template('blog/edit_post.html', post=post)
+
+
+with app.app_context():
+    if Category.query.count() == 0:
+        categorias = ['Tecnología', 'Ciencia', 'Arte', 'Opinión', 'Noticias']
+        for nombre in categorias:
+            db.session.add(Category(name=nombre))
+        db.session.commit()
+        print("Categorías iniciales creadas.")
+
+
 if __name__ == '__main__':
     app.run(debug=True)

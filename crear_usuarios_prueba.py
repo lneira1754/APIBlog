@@ -5,7 +5,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from app import app, db
 from models.user import User
 from werkzeug.security import generate_password_hash
-
+#Este codigo lo hice con chatgpt para probar la creacion de usuarios mas rapida xd
 def create_test_users():
     with app.app_context():
         users = [

@@ -1,8 +1,7 @@
-from extensions import db  # Cambia esta línea
+from extensions import db
 from flask_login import UserMixin
 from datetime import datetime
 
-# El resto de tu código de modelos permanece igual
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)

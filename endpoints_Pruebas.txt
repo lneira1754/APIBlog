@@ -1,0 +1,50 @@
+#health check
+curl http://localhost:5000/api/health
+#ver todos los posts públicos
+curl http://localhost:5000/api/posts
+#ver todas las categorías
+curl http://localhost:5000/api/categories
+#ver comentarios de un post específico
+curl http://localhost:5000/api/posts/1/comments
+
+#endpoints de autenticacion
+#registrar nuevo usuario
+curl -X POST http://localhost:5000/api/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "usuarioprueba",
+    "email": "prueba@example.com",
+    "password": "password123"
+  }'
+#iniciar sesión
+curl -X POST http://localhost:5000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@example.com",
+    "password": "admin123"
+  }'
+
+#guardar el token en variable (copiar el token de la respuesta) o pueden usar el token entero, pero es mejor usar la variable para que no sea tan largo
+TOKEN="cambiar por token que da la app para los siguentes endpoints"
+#ver perfil del usuario
+curl -X GET http://localhost:5000/api/profile \
+  -H "Authorization: Bearer $TOKEN"
+#ver mis posts
+curl -X GET http://localhost:5000/api/my-posts \
+  -H "Authorization: Bearer $TOKEN"
+#crear un nuevo post
+curl -X POST http://localhost:5000/api/posts \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{
+    "title": "Mi primer post",
+    "content": "Este es el contenido de mi primer post",
+    "categories": [1, 2]
+  }'
+#agregar comentario a un post
+curl -X POST http://localhost:5000/api/posts/1/comments \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{
+    "text": "Este es un comentario de prueba"
+  }'

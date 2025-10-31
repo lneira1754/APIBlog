@@ -24,7 +24,7 @@ class CategoryListAPI(MethodView):
             #validar datos
             errors = category_schema.validate(request.json)
             if errors:
-                return jsonify({'errors': errors}), 400
+                return jsonify({'errores': errors}), 400
             
             category_data = category_schema.load(request.json)
             
@@ -63,7 +63,7 @@ class CategoryDetailAPI(MethodView):
             #validar datos
             errors = category_schema.validate(request.json)
             if errors:
-                return jsonify({'errors': errors}), 400
+                return jsonify({'errores': errors}), 400
             
             category_data = category_schema.load(request.json)
             
@@ -92,11 +92,11 @@ class CategoryDetailAPI(MethodView):
             
             category_service.delete_category(category)
             
-            return jsonify({'message': 'Categoria eliminada exitosamente'}), 200
+            return jsonify({'mensaje': 'Categoria eliminada exitosamente'}), 200
             
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 
-# Registrar rutas
+#registrar rutas
 category_bp.add_url_rule('/categories', view_func=CategoryListAPI.as_view('categories'))
 category_bp.add_url_rule('/categories/<int:category_id>', view_func=CategoryDetailAPI.as_view('category_detail'))

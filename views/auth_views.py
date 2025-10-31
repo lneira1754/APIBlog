@@ -14,9 +14,10 @@ user_repo = UserRepository()
 class RegisterAPI(MethodView):
     def post(self):
         try:
+            #validar datos de entrada
             errors = user_schema.validate(request.json)
             if errors:
-                return jsonify({'errors': errors}), 400
+                return jsonify({'errores': errors}), 400
             
             user_data = user_schema.load(request.json)
             user, error = auth_service.register_user(user_data)
@@ -25,19 +26,20 @@ class RegisterAPI(MethodView):
                 return jsonify({'error': error}), 400
             
             return jsonify({
-                'message': 'Usuario creado exitosamente',
+                'mensaje': 'Usuario creado exitosamente',
                 'user_id': user.id
             }), 201
             
         except Exception as e:
-            return jsonify({'error': str(e)}), 500
+            return jsonify({'error': 'Error interno del servidor'}), 500
 
 class LoginAPI(MethodView):
     def post(self):
         try:
+            #validar datos de entrada
             errors = login_schema.validate(request.json)
             if errors:
-                return jsonify({'errors': errors}), 400
+                return jsonify({'errores': errors}), 400
             
             data = login_schema.load(request.json)
             result, error = auth_service.login_user(data['email'], data['password'])
@@ -48,7 +50,7 @@ class LoginAPI(MethodView):
             return jsonify(result), 200
             
         except Exception as e:
-            return jsonify({'error': str(e)}), 500
+            return jsonify({'error': 'Error interno del servidor'}), 500
 
 class ProfileAPI(MethodView):
     @jwt_required()
@@ -58,13 +60,15 @@ class ProfileAPI(MethodView):
             #el user_id ahora es string, convertir a int para la consulta
             user = user_repo.get_by_id(int(user_id))
             
+
+            
             if not user:
                 return jsonify({'error': 'Usuario no encontrado'}), 404
             
             return jsonify(user.to_dict()), 200
             
         except Exception as e:
-            return jsonify({'error': str(e)}), 500
+            return jsonify({'error': 'Error interno del servidor'}), 500
 
 #registro de rutas de las paginas
 auth_bp.add_url_rule('/register', view_func=RegisterAPI.as_view('register'))

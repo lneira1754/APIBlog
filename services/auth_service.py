@@ -7,9 +7,12 @@ class AuthService:
         self.user_repo = UserRepository()
     
     def register_user(self, user_data):
-        #verificamos si esta el suuario creado anteriormente
+        #vrificar si el usuario ya existe en la bd
         if self.user_repo.get_by_email(user_data['email']):
             return None, 'El email ya esta registrado'
+        
+        if self.user_repo.get_by_username(user_data['username']):
+            return None, 'El nombre de usuario ya existe'
         
         user = self.user_repo.create(user_data)
         return user, None
@@ -22,9 +25,9 @@ class AuthService:
         if not user.is_active:
             return None, 'Usuario desactivado'
         
-        #se cea el token
+        #crear token en jwt
         access_token = create_access_token(
-            identity=str(user.id), 
+            identity=str(user.id),
             additional_claims={
                 'email': user.email,
                 'role': user.role,

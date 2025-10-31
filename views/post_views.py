@@ -54,11 +54,11 @@ class PostDetailAPI(MethodView):
             if not post:
                 return jsonify({'error': 'Post no encontrado'}), 404
             
-            # Verificar permisos
+            #vrificar permisos
             if not check_ownership(post.user_id):
                 return jsonify({'error': 'No tienes permisos para editar este post'}), 403
             
-            # Validar datos
+            #validar datos
             errors = post_update_schema.validate(request.json)
             if errors:
                 return jsonify({'errors': errors}), 400
@@ -78,14 +78,14 @@ class PostDetailAPI(MethodView):
             if not post:
                 return jsonify({'error': 'Post no encontrado'}), 404
             
-            # Verificar permisos - autor o admin
+            #vrificar permisos - autor o admin
             claims = get_jwt()
             if claims.get('role') != 'admin' and post.user_id != get_jwt_identity():
                 return jsonify({'error': 'No tienes permisos para eliminar este post'}), 403
             
             post_service.delete_post(post)
             
-            return jsonify({'message': 'Post eliminado exitosamente'}), 200
+            return jsonify({'mensaje': 'Post eliminado exitosamente'}), 200
             
         except Exception as e:
             return jsonify({'error': str(e)}), 500

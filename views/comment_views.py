@@ -36,7 +36,7 @@ class CommentListAPI(MethodView):
             #validar datos
             errors = comment_schema.validate(request.json)
             if errors:
-                return jsonify({'errors': errors}), 400
+                return jsonify({'errores': errors}), 400
             
             user_id = get_jwt_identity()
             comment_data = comment_schema.load(request.json)
@@ -73,15 +73,15 @@ class CommentDetailAPI(MethodView):
             #los moderadores solo pueden ocultar, no eliminar(solo admin)
             if user_role == 'moderator' and not check_ownership(comment.user_id):
                 comment_service.hide_comment(comment)
-                return jsonify({'message': 'Comentario ocultado exitosamente'}), 200
+                return jsonify({'mensaje': 'Comentario ocultado exitosamente'}), 200
             else:
                 #el autor o admin pueden eliminar completamente
                 comment_service.delete_comment(comment)
-                return jsonify({'message': 'Comentario eliminado exitosamente'}), 200
+                return jsonify({'mensaje': 'Comentario eliminado exitosamente'}), 200
             
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 
-# Registrar rutas
+#registrar rutas
 comment_bp.add_url_rule('/posts/<int:post_id>/comments', view_func=CommentListAPI.as_view('post_comments'))
 comment_bp.add_url_rule('/comments/<int:comment_id>', view_func=CommentDetailAPI.as_view('comment_detail'))

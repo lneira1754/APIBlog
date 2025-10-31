@@ -39,7 +39,7 @@ def missing_token_callback(error):
 #error cuando el token necesita ser renovado
 @jwt.needs_fresh_token_loader
 def token_not_fresh_callback(jwt_header, jwt_payload):
-    return jsonify({'error': 'Token necesita ser nuevo'}), 401
+    return jsonify({'error': 'El Token necesita ser nuevo'}), 401
 
 @jwt.revoked_token_loader
 def revoked_token_callback(jwt_header, jwt_payload):

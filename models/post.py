@@ -10,12 +10,12 @@ class Post(db.Model):
     is_published = db.Column(db.Boolean, default=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
-    #Relaciones con otros modelos estoy probando unas cosas todavia aqui
-    #comments = db.relationship('Comment', backref='post', lazy=True)
-    #categories = db.relationship('Category', secondary='post_category', backref='posts', lazy=True)
-    #comments = db.relationship('Comentarios', backref='post', lazy=True)
-    #categories = db.relationship('Categorias', secondary='post_category', backref='posts', lazy=True)
 
+    #Relaciones con otros modelos estoy probando unas cosas todavia aqui
+    comments = db.relationship('Comment', backref='post', lazy=True)
+    categories = db.relationship('Category', secondary='post_category', backref='posts', lazy=True)
+   
+   
     def __str__(self):
         return self.title
 

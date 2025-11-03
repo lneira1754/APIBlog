@@ -31,7 +31,7 @@ class RegisterAPI(MethodView):
             }), 201
             
         except Exception as e:
-            return jsonify({'error': 'Error interno del servidor'}), 500
+            return jsonify({'error': str(e)}), 500
 
 class LoginAPI(MethodView):
     def post(self):
@@ -59,8 +59,6 @@ class ProfileAPI(MethodView):
             user_id = get_jwt_identity()
             #el user_id ahora es string, convertir a int para la consulta
             user = user_repo.get_by_id(int(user_id))
-            
-
             
             if not user:
                 return jsonify({'error': 'Usuario no encontrado'}), 404

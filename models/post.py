@@ -10,11 +10,9 @@ class Post(db.Model):
     is_published = db.Column(db.Boolean, default=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
-
-    #Relaciones con otros modelos estoy probando unas cosas todavia aqui
+    # Relaciones con otros modelos
     comments = db.relationship('Comment', backref='post', lazy=True)
     categories = db.relationship('Category', secondary='post_category', backref='posts', lazy=True)
-   
    
     def __str__(self):
         return self.title
@@ -28,5 +26,7 @@ class Post(db.Model):
             'updated_at': self.updated_at.isoformat(),
             'is_published': self.is_published,
             'author': self.author.username,
-            'author_id': self.user_id
+            'author_id': self.user_id,
+            # Agregar información de categorías
+            'categories': [category.to_dict() for category in self.categories]
         }

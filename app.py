@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flask_cors import CORS 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
@@ -8,6 +9,12 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
+
+CORS(app, 
+     supports_credentials=True,
+     origins=["http://localhost:3000"],  # Especifica el origen
+     methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+     allow_headers=["Content-Type", "Authorization"])
 
 #configuracion de la base de datos y secret key
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'mysql+pymysql://root:@localhost/miniblog_flask')

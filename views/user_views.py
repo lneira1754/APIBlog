@@ -43,7 +43,7 @@ class UserDetailAPI(MethodView):
 class UserRoleAPI(MethodView):
     @jwt_required()
     @admin_required
-    def patch(self, user_id):
+    def put(self, user_id):
         try:
             user = user_service.get_user_by_id(user_id)
             if not user:
@@ -66,7 +66,7 @@ class UserRoleAPI(MethodView):
 class UserStatusAPI(MethodView):
     @jwt_required()
     @admin_required
-    def patch(self, user_id):
+    def put(self, user_id):
         try:
             user = user_service.get_user_by_id(user_id)
             if not user:

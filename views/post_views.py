@@ -78,9 +78,18 @@ class PostDetailAPI(MethodView):
             if not post:
                 return jsonify({'error': 'Post no encontrado'}), 404
             
-            #vrificar permisos - autor o admin
+            current_user_id = get_jwt_identity()
             claims = get_jwt()
-            if claims.get('role') != 'admin' and post.user_id != get_jwt_identity():
+            user_role = claims.get('role')
+            
+            # Debug: imprimir valores para verificar
+            print(f"DEBUG - User ID: {current_user_id} (type: {type(current_user_id)})")
+            print(f"DEBUG - Post User ID: {post.user_id} (type: {type(post.user_id)})")
+            print(f"DEBUG - User Role: {user_role}")
+            
+            # Verificar permisos - solo autor o admin pueden eliminar
+            # Convertir ambos a int para comparación segura
+            if user_role != 'admin' and int(post.user_id) != int(current_user_id):
                 return jsonify({'error': 'No tienes permisos para eliminar este post'}), 403
             
             post_service.delete_post(post)
@@ -88,6 +97,7 @@ class PostDetailAPI(MethodView):
             return jsonify({'mensaje': 'Post eliminado exitosamente'}), 200
             
         except Exception as e:
+            print(f"Error eliminando post: {str(e)}")
             return jsonify({'error': str(e)}), 500
     
     def _can_edit_post(self, post):

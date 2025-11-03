@@ -27,10 +27,11 @@ def check_ownership(resource_user_id):
     """Verifica si el usuario es dueño de los datos(Post, Comentario, otros) o es admin"""
     verify_jwt_in_request()
     claims = get_jwt()
-    current_user_id = int(get_jwt_identity())
+    current_user_id = get_jwt_identity()
     user_role = claims.get('role')
     
-    if user_role == 'admin' or current_user_id == resource_user_id:
+    #convertir ambos a int para comparación segura ya que pueden ser strings(se cambio por que no dejaba borrar los posts)
+    if user_role == 'admin' or int(current_user_id) == int(resource_user_id):
         return True
     
     return False

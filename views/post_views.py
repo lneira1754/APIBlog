@@ -71,6 +71,7 @@ class PostDetailAPI(MethodView):
         except Exception as e:
             return jsonify({'error': str(e)}), 500
     
+    # En tu blueprint/controller de posts
     @jwt_required()
     def delete(self, post_id):
         try:
@@ -78,27 +79,21 @@ class PostDetailAPI(MethodView):
             if not post:
                 return jsonify({'error': 'Post no encontrado'}), 404
             
+            # Verificar permisos
             current_user_id = get_jwt_identity()
             claims = get_jwt()
             user_role = claims.get('role')
             
-            # Debug: imprimir valores para verificar
-            print(f"DEBUG - User ID: {current_user_id} (type: {type(current_user_id)})")
-            print(f"DEBUG - Post User ID: {post.user_id} (type: {type(post.user_id)})")
-            print(f"DEBUG - User Role: {user_role}")
-            
-            # Verificar permisos - solo autor o admin pueden eliminar
-            # Convertir ambos a int para comparación segura
-            if user_role != 'admin' and int(post.user_id) != int(current_user_id):
+            if user_role != 'admin' and str(post.user_id) != str(current_user_id):
                 return jsonify({'error': 'No tienes permisos para eliminar este post'}), 403
             
+            # SOFT DELETE (no eliminar comentarios)
             post_service.delete_post(post)
             
             return jsonify({'mensaje': 'Post eliminado exitosamente'}), 200
             
         except Exception as e:
-            print(f"Error eliminando post: {str(e)}")
-            return jsonify({'error': str(e)}), 500
+            return jsonify({'error': 'Error interno del servidor'}), 500
     
     def _can_edit_post(self, post):
         """Verifica si el usuario actual puede ver posts no publicados"""

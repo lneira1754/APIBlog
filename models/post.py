@@ -10,6 +10,9 @@ class Post(db.Model):
     is_published = db.Column(db.Boolean, default=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
+    # NUEVO CAMPO para borrado de posts
+    deleted = db.Column(db.Boolean, default=False)
+    
     # Relaciones con otros modelos
     comments = db.relationship('Comment', backref='post', lazy=True)
     categories = db.relationship('Category', secondary='post_category', backref='posts', lazy=True)
@@ -27,6 +30,5 @@ class Post(db.Model):
             'is_published': self.is_published,
             'author': self.author.username,
             'author_id': self.user_id,
-            # Agregar información de categorías
             'categories': [category.to_dict() for category in self.categories]
         }

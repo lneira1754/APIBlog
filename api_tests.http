@@ -1,0 +1,252 @@
+@baseUrl = http://localhost:5002/api
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2Mjg2NTc4OCwianRpIjoiNjBiYzY0MmUtYTljMS00M2ZkLTg5MDAtNmJmNWY5MGNjNjZkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjgiLCJuYmYiOjE3NjI4NjU3ODgsImNzcmYiOiI2ZGY0NGM3MS0xMzRlLTQzMDMtOTE3Yy0xYWJmYzdhZWU3OTAiLCJleHAiOjE3NjI5NTIxODgsImVtYWlsIjoibnVldm9fdXNlckBleGFtcGxlLmNvbSIsInJvbGUiOiJ1c2VyIiwidXNlcm5hbWUiOiJudWV2b191c2VyIn0.mzLrKXh17hk9J2WasJB_mqFjyuw_3o7zaEgLLD1qlT4
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2Mjg2MjgyNSwianRpIjoiNjBkNTUwMWEtY2I5OS00ODIwLTkxNjctZTBkYTJmNjVmMWVmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjMiLCJuYmYiOjE3NjI4NjI4MjUsImNzcmYiOiI0NzY5ZTMyNS1lZTczLTRhNTQtOTY3Yy1jNWVjZWI1YjhlNmYiLCJleHAiOjE3NjI5NDkyMjUsImVtYWlsIjoibHVjYXNlbnJpb0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJ1c2VybmFtZSI6Ikx1Y2FzSmF2aWVyIn0.nYDN6_7OFsCUzzzfLMoJA5wnkLG0xMCUuhb9YMhUJ1k
+@postId = 12
+@commentId = 1
+@categoryId = 1
+@userId = 8
+
+### AUTH - Registro (201)
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "username": "nuevo_user1",
+  "email": "nuevo1_user@example.com",
+  "password": "ClaveSegura123"
+}
+
+### AUTH - Registro con email duplicado (400)
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "username": "nuevo_user",
+  "email": "nuevo_user@example.com",
+  "password": "ClaveSegura123"
+}
+
+### AUTH - Login (200)
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "nuevo_user@example.com",
+  "password": "ClaveSegura123"
+}
+
+### AUTH - Login con password incorrecto (401)
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "nuevo_user@example.com",
+  "password": "Incorrecta"
+}
+
+### AUTH - Perfil (200)
+GET {{baseUrl}}/profile
+Authorization: Bearer {{userToken}}
+
+### AUTH - Perfil sin token (401)
+GET {{baseUrl}}/profile
+
+### POSTS - Listado público (200)
+GET {{baseUrl}}/posts
+
+### POSTS - Crear post (201)
+POST {{baseUrl}}/posts
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "title": "Primer post",
+  "content": "Contenido del post",
+  "is_published": true,
+  "categories": [{{categoryId}}]
+}
+
+### POSTS - Crear post sin token (401)
+POST {{baseUrl}}/posts
+Content-Type: application/json
+
+{
+  "title": "Debe fallar",
+  "content": "sin token"
+}
+
+### POSTS - Obtener detalle (200)
+GET {{baseUrl}}/posts/{{postId}}
+
+### POSTS - Detalle inexistente (404)
+GET {{baseUrl}}/posts/999999
+
+### POSTS - Actualizar post (200)
+PUT {{baseUrl}}/posts/{{postId}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "title": "Post editado"
+}
+
+### POSTS - Actualizar sin permisos (403)
+PUT {{baseUrl}}/posts/{{postId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "No deberia poder si no es duenio"
+}
+
+### POSTS - Eliminar post (200)
+DELETE {{baseUrl}}/posts/{{postId}}
+Authorization: Bearer {{userToken}}
+
+### POSTS - Eliminar sin autenticación (401)
+DELETE {{baseUrl}}/posts/{{postId}}
+
+### POSTS - Mis posts (200)
+GET {{baseUrl}}/my-posts
+Authorization: Bearer {{userToken}}
+
+### POSTS - Mis posts sin token (401)
+GET {{baseUrl}}/my-posts
+
+### COMMENTS - Listar por post (200)
+GET {{baseUrl}}/posts/{{postId}}/comments
+
+### COMMENTS - Crear comentario (201)
+POST {{baseUrl}}/posts/{{postId}}/comments
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "content": "Buen artículo" 
+}
+
+### COMMENTS - Crear sin contenido (400)
+POST {{baseUrl}}/posts/{{postId}}/comments
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{}
+
+### COMMENTS - Eliminar comentario (200)
+DELETE {{baseUrl}}/comments/{{commentId}}
+Authorization: Bearer {{userToken}}
+
+### COMMENTS - Eliminar sin permisos (403)
+DELETE {{baseUrl}}/comments/{{commentId}}
+Authorization: Bearer {{adminToken}}
+
+### CATEGORIES - Listado (200)
+GET {{baseUrl}}/categories
+
+### CATEGORIES - Crear categoría (201)
+POST {{baseUrl}}/categories
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Backend"
+}
+
+### CATEGORIES - Crear duplicada (400)
+POST {{baseUrl}}/categories
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Backend"
+}
+
+### CATEGORIES - Detalle (200)
+GET {{baseUrl}}/categories/{{categoryId}}
+
+### CATEGORIES - Detalle inexistente (404)
+GET {{baseUrl}}/categories/999999
+
+### CATEGORIES - Actualizar (200)
+PUT {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Backend actualizado"
+}
+
+### CATEGORIES - Actualizar sin permisos (403)
+PUT {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "name": "Debe fallar"
+}
+
+### CATEGORIES - Eliminar (200)
+DELETE {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{adminToken}}
+
+### CATEGORIES - Eliminar con posts asociados (400)
+DELETE {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{adminToken}}
+
+### USERS - Listado (200)
+GET {{baseUrl}}/users
+Authorization: Bearer {{adminToken}}
+
+### USERS - Listado sin permisos (403)
+GET {{baseUrl}}/users
+Authorization: Bearer {{userToken}}
+
+### USERS - Detalle (200)
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{adminToken}}
+
+### USERS - Detalle sin permisos (403)
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{userToken}}
+
+### USERS - Cambiar rol (200)
+PATCH {{baseUrl}}/users/{{userId}}/role
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "role": "moderator"
+}
+
+### USERS - Cambiar rol inválido (400)
+PATCH {{baseUrl}}/users/{{userId}}/role
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "role": "superuser"
+}
+
+### USERS - Cambiar estado (200)
+PATCH {{baseUrl}}/users/{{userId}}/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "is_active": false
+}
+
+### USERS - Cambiar estado sin cuerpo (400)
+PATCH {{baseUrl}}/users/{{userId}}/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{}
+
+### STATS - Obtener estadísticas (200)
+GET {{baseUrl}}/stats
+Authorization: Bearer {{adminToken}}
+
+### STATS - Acceso sin rol válido (403)
+GET {{baseUrl}}/stats
+Authorization: Bearer {{userToken}}

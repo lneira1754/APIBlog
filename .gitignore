@@ -1,15 +1,18 @@
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-env/
+# Entorno virtual
+.venv/
 venv/
-.idea/
-*.sqlite3
-*.db
-*.log
-*.bak
-*.swp
-.DS_Store
-__init__.py
+bin/
+lib/
+lib64/
+include/
+share/
+
+# python cache
+
+__pycache__/
+*.py[cod]
+
+#variable de entorno
+.env
+
 
